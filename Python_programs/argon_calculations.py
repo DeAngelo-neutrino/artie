@@ -12,6 +12,7 @@ import os
 import math
 import sys
 from scipy.interpolate import UnivariateSpline
+from scipy.optimize import curve_fit
 np.set_printoptions(threshold=sys.maxsize)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -23,12 +24,14 @@ os.chdir("/Users/dwooley/Desktop/Python_programs/")
 
 #we need to create varibles that are assoicated with each channel so we can plot, (This has been complete.)
 #This creates an array/ column of data
-time_argon = np.genfromtxt("log_all_chan_5_10-14_17_44.txt",skip_header=9, delimiter=",", usecols=(0))   
-target_top = np.genfromtxt("log_all_chan_5_10-14_17_44.txt",skip_header=9, delimiter=",", usecols=(1))   
-target_side = np.genfromtxt("log_all_chan_5_10-14_17_44.txt",skip_header=9, delimiter=",", usecols=(2))   
-target_bottom = np.genfromtxt("log_all_chan_5_10-14_17_44.txt",skip_header=9, delimiter=",", usecols=(3))   
-front_plate= np.genfromtxt("log_all_chan_5_10-14_17_44.txt",skip_header=9, delimiter=",", usecols=(4))  
-N2_level= np.genfromtxt("log_all_chan_5_10-14_17_44.txt",skip_header=9, delimiter=",", usecols=(9))   
+file_name = "log_all_chan_5_10-14_17_44.txt"
+file_name_1 = "log_all_chan_5_9-15_5_57.txt"
+time_argon = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(0))   
+target_top = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(1))   
+target_side = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(2))   
+target_bottom = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(3))   
+front_plate= np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(4))  
+N2_level= np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(9))   
  
 
 #print(time_argon)
@@ -56,22 +59,6 @@ plt.show()
 
 
 
-
-#y_error = 10000
-
-#We are going to create a histogram using the n_2 levels data
-"""
-plt.figure(3)
-plt.hist(N2_level, bins=200, color="green") 
-#plt.errorbar(N2_level,N2_level, yerr=y_error, fmt='o', color="r")
-plt.title("Histogram of N2 Levels")
-plt.xlabel("N2 Level [cm]")
-plt.ylabel("Quantity")
-plt.show() 
-"""
-
-
-
 #now we want to try to do a average we are gonna try using pandas
 
 df = pd.read_csv("log_all_chan_5_10-14_17_44.txt", skiprows=9, sep=',' ) # we have to use , as delimitter and we use skiprows to ignore the first rows before the data
@@ -87,7 +74,7 @@ df = pd.read_csv("log_all_chan_5_10-14_17_44.txt", skiprows=9, sep=',' ) # we ha
 
 
 
-window_size = 5000 #900 was intial value
+window_size = 900 #900 was intial value
 
 time_column = df['Time (s)']
 N2_level_dataseries = df['N2 Level']
@@ -202,26 +189,17 @@ df['test'] = twice_length * all_togeterRs(N2_average)
 df['volume(Argon)'] =  v_h_0+(df['test']) + twice_length*full_integration #this is in inches^3
 volume_function_as_height = df['volume(Argon)']
 
-#print("hi",df['volume(Argon)'].head(50))
 
 
-lower_parsed_data = 8000 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
-upper_parsed_data = 10000 #this is the upper limit of where the data ends
+lower_parsed_data = 7000 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
+upper_parsed_data = 9000 #this is the upper limit of where the data ends
 
 
 data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data]
 
 
 
-#print(print(df.iloc[200:300]))
-#print("volume(Argon):")
-#print(df['volume(Argon)'].head(45))
-
-
-#print(2*L*both_Rs_integration_R2_in_argument(N2_average)) #so you can just you the pandas array to calculate the functions :)
-#print("first integral part",twice_length*full_integration)
-
-
+#non_average_time = time_column.iloc[lower_parsed_data:upper_parsed_data]
 #print("Function_Result_R1:", df['Function_Result_R1'].head(50))
 #print("Function_Result_R2:", df['Function_Result_R2'].head(50))
 #print("volume(Argon):", df['volume(Argon)'].head(50))
@@ -248,13 +226,15 @@ or in math form
 ∂v(t)/∂t  = (∂v/∂t)(t)
 """
 
-
+"""
 diff_of_v_argon = np.diff(volume_function_as_height)
 diff_of_time = np.diff(time_column)
 dydx_0 = diff_of_v_argon/diff_of_time
 print(len(dydx_0))
 #df['boil off rate'] = dydx_0
 #print("This is the of differential of volume of argon with respect to time",diff_of_v_argon/diff_of_time)
+"""
+
 
 
 
@@ -309,6 +289,8 @@ plt.show()
 """
 
 
+
+"""
 # Fit a spline to the data
 spline = UnivariateSpline(parsed_time_average, dydx, s=1)
 
@@ -334,7 +316,7 @@ plt.legend()
 plt.grid()
 plt.show()
 #sometimes the reason why the spline is messing up is because it can not plot the discontinous function
-
+"""
 
 
 plt.figure(6)
@@ -377,8 +359,147 @@ print("if we convert to [joules]/[second] we get",mean_heat_load*1000)
 
 #print(f"Min parsed_time_average: {np.min(parsed_time_average)}")
 #print(f"Max parsed_time_average: {np.max(parsed_time_average)}")
-
-print("Spline Coefficients:", coefficients)
-
+#print("Spline Coefficients:", coefficients)
 
 
+
+
+
+def exponential_decay(x, A, B, C):
+    return  A* np.exp(-B * x) + C
+
+
+x_data = parsed_time_average  
+y_data = data_we_use 
+
+
+
+
+print(max(y_data),"This is the max value",len(y_data),"array size",len(x_data),"x array size")
+print(min(y_data),"This is the min value")
+#has_nan = np.isnan(x_data).any()
+#print(f"Array contains NaN values: {has_nan}")
+#max(y_data)
+# Initial guess for parameters A, B, and C
+
+initial_guess = [max(y_data),1, min(y_data)]
+
+# Perform the curve fitting
+popt, pcov  = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess)
+
+# Extract the optimal parameters
+A_opt, B_opt, C_opt = popt
+
+# Generate y values using the fitted parameters
+y_fit = exponential_decay(x_data, *popt)
+
+
+# Plot data and fit
+plt.figure(figsize=(10, 6))
+plt.plot(x_data, y_data, 'g-',label='Data')
+#plt.plot(x_data, y_fit1, label='Exponential Decay Fitfake data', color='blue')
+plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
+plt.xlabel('X')
+plt.ylabel('Y')
+#plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
+plt.title('Exponential Decay Fit')
+plt.legend()
+plt.show()
+
+
+
+
+
+"""
+np.random.seed(0)  # For reproducibility
+
+# True parameters
+A_true = 5.0
+B_true = 1.0
+C_true = 2.0
+
+# Generate x values
+x_data = x_data
+
+# Generate y values with added noise
+y_data = exponential_decay(x_data, A_true, B_true, C_true) + np.random.normal(scale=0.5, size=x_data.shape)
+
+# Fit the exponential decay model to the data
+# Initial guess for parameters A, B, and C
+initial_guess = [max(y_data), 1.0, min(y_data)]
+
+# Perform the curve fitting
+popt, pcov = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess)
+
+# Extract the optimal parameters
+A_opt, B_opt, C_opt = popt
+
+# Generate y values using the fitted parameters
+y_fit1 = exponential_decay(x_data, *popt)
+
+
+
+
+# Plot data and fit
+plt.figure(figsize=(10, 6))
+plt.plot(x_data, y_data, 'g-',label='Data')
+#plt.plot(x_data, y_fit1, label='Exponential Decay Fitfake data', color='blue')
+plt.plot(x_data, y_fit1, label='Exponential Decay Fit data', color='blue')
+plt.xlabel('X')
+plt.ylabel('Y')
+#plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
+plt.title('Exponential Decay Fit')
+plt.legend()
+plt.show()
+
+
+# Print the optimal parameters
+#print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}")
+
+
+#print(f"True parameters:\nA = {A_true}\nB = {B_true}\nC = {C_true}")
+#print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}")
+"""
+
+
+"""
+from numpy.polynomial import Polynomial
+
+# Fit a polynomial of degree 2
+p = Polynomial.fit(x_data, y_data, 2)
+y_fit_poly = p(x_data)
+coefficients = p.coef
+a2, a1, a0 = coefficients
+equation_text = f"Polynomial equation: y = {a2:.4f} * x^2 + {a1:.4f} * x + {a0:.4f}"
+
+
+
+plt.figure(figsize=(12, 6))
+plt.scatter(x_data, y_data, label='Data', color='red', marker='o')
+plt.plot(x_data, y_fit_poly, label='Polynomial Fit (degree 2)', color='purple', linewidth=2)
+plt.xlabel('X Data Time[Seconds]')
+plt.ylabel('Y Data Volume as a function of Height [In^3]')
+plt.title('Polynomial Fit')
+plt.legend()
+plt.text(0.05, 0.95, equation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
+plt.grid(True)
+plt.show()
+
+
+coefficients = p.coef
+print(f"Polynomial coefficients (highest degree first): {coefficients}")
+
+# For a polynomial of degree 2: p(x) = a2*x^2 + a1*x + a0
+a2, a1, a0 = coefficients
+print(f"Polynomial equation: y = {a2:.4f} * x^2 + {a1:.4f} * x + {a0:.4f}")
+"""
+"""
+residuals = y_data - exponential_decay(x_data, *popt)
+plt.figure(figsize=(10, 6))
+plt.plot(x_data, residuals, 'o')
+plt.title('Residuals')
+plt.xlabel('X')
+plt.ylabel('Residuals')
+plt.grid(True)
+plt.show()
+"""
