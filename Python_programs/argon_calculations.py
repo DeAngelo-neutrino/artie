@@ -192,7 +192,7 @@ volume_function_as_height = df['volume(Argon)']
 
 
 lower_parsed_data = 7000 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
-upper_parsed_data = 9000 #this is the upper limit of where the data ends
+upper_parsed_data = 10000 #this is the upper limit of where the data ends
 
 
 data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data]
@@ -382,7 +382,9 @@ print(min(y_data),"This is the min value")
 #max(y_data)
 # Initial guess for parameters A, B, and C
 
-initial_guess = [max(y_data),1, min(y_data)]
+
+B = 1*10**-8
+initial_guess = [max(y_data),B, min(y_data)]
 
 # Perform the curve fitting
 popt, pcov  = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess)
@@ -395,111 +397,24 @@ y_fit = exponential_decay(x_data, *popt)
 
 
 # Plot data and fit
+annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2f}')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Data')
-#plt.plot(x_data, y_fit1, label='Exponential Decay Fitfake data', color='blue')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
+
+
+
+
 plt.xlabel('X')
 plt.ylabel('Y')
 #plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
 plt.title('Exponential Decay Fit')
 plt.legend()
+plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
+plt
 plt.show()
-
-
-
-
-
-"""
-np.random.seed(0)  # For reproducibility
-
-# True parameters
-A_true = 5.0
-B_true = 1.0
-C_true = 2.0
-
-# Generate x values
-x_data = x_data
-
-# Generate y values with added noise
-y_data = exponential_decay(x_data, A_true, B_true, C_true) + np.random.normal(scale=0.5, size=x_data.shape)
-
-# Fit the exponential decay model to the data
-# Initial guess for parameters A, B, and C
-initial_guess = [max(y_data), 1.0, min(y_data)]
-
-# Perform the curve fitting
-popt, pcov = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess)
-
-# Extract the optimal parameters
-A_opt, B_opt, C_opt = popt
-
-# Generate y values using the fitted parameters
-y_fit1 = exponential_decay(x_data, *popt)
-
-
-
-
-# Plot data and fit
-plt.figure(figsize=(10, 6))
-plt.plot(x_data, y_data, 'g-',label='Data')
-#plt.plot(x_data, y_fit1, label='Exponential Decay Fitfake data', color='blue')
-plt.plot(x_data, y_fit1, label='Exponential Decay Fit data', color='blue')
-plt.xlabel('X')
-plt.ylabel('Y')
-#plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
-plt.title('Exponential Decay Fit')
-plt.legend()
-plt.show()
-
 
 # Print the optimal parameters
-#print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}")
+print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}")
 
 
-#print(f"True parameters:\nA = {A_true}\nB = {B_true}\nC = {C_true}")
-#print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}")
-"""
-
-
-"""
-from numpy.polynomial import Polynomial
-
-# Fit a polynomial of degree 2
-p = Polynomial.fit(x_data, y_data, 2)
-y_fit_poly = p(x_data)
-coefficients = p.coef
-a2, a1, a0 = coefficients
-equation_text = f"Polynomial equation: y = {a2:.4f} * x^2 + {a1:.4f} * x + {a0:.4f}"
-
-
-
-plt.figure(figsize=(12, 6))
-plt.scatter(x_data, y_data, label='Data', color='red', marker='o')
-plt.plot(x_data, y_fit_poly, label='Polynomial Fit (degree 2)', color='purple', linewidth=2)
-plt.xlabel('X Data Time[Seconds]')
-plt.ylabel('Y Data Volume as a function of Height [In^3]')
-plt.title('Polynomial Fit')
-plt.legend()
-plt.text(0.05, 0.95, equation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
-plt.grid(True)
-plt.show()
-
-
-coefficients = p.coef
-print(f"Polynomial coefficients (highest degree first): {coefficients}")
-
-# For a polynomial of degree 2: p(x) = a2*x^2 + a1*x + a0
-a2, a1, a0 = coefficients
-print(f"Polynomial equation: y = {a2:.4f} * x^2 + {a1:.4f} * x + {a0:.4f}")
-"""
-"""
-residuals = y_data - exponential_decay(x_data, *popt)
-plt.figure(figsize=(10, 6))
-plt.plot(x_data, residuals, 'o')
-plt.title('Residuals')
-plt.xlabel('X')
-plt.ylabel('Residuals')
-plt.grid(True)
-plt.show()
-"""
