@@ -24,8 +24,8 @@ os.chdir("/Users/dwooley/Desktop/Python_programs/")
 
 #we need to create varibles that are assoicated with each channel so we can plot, (This has been complete.)
 #This creates an array/ column of data
-file_name = "log_all_chan_5_10-14_17_44.txt"
-file_name_1 = "log_all_chan_5_9-15_5_57.txt"
+file_name_1 = "log_all_chan_5_10-14_17_44.txt"
+file_name = "log_all_chan_5_9-15_5_57.txt"
 time_argon = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(0))   
 target_top = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(1))   
 target_side = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(2))   
@@ -61,7 +61,7 @@ plt.show()
 
 #now we want to try to do a average we are gonna try using pandas
 
-df = pd.read_csv("log_all_chan_5_10-14_17_44.txt", skiprows=9, sep=',' ) # we have to use , as delimitter and we use skiprows to ignore the first rows before the data
+df = pd.read_csv(file_name, skiprows=9, sep=',' ) # we have to use , as delimitter and we use skiprows to ignore the first rows before the data
 
 #df_1 = pd.read_csv("log_all_chan_5_10-14_17_44.txt",header=None, sep=',')
 
