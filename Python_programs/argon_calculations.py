@@ -124,7 +124,7 @@ lower_limit_calculation =   ((1/2)* (np.sqrt(R_2*R_2 - h__lower*h__lower))*h__lo
 full_integration = upper_limitcalculation-lower_limit_calculation
 
 only_R2 =  2*L *full_integration # this is correct we cross check with wolfram and excel
-print("only R_2 in integral calculation",only_R2,"inches^3")
+#print("only R_2 in integral calculation",only_R2,"inches^3")
 
 
 # we redefine varibles
@@ -178,10 +178,6 @@ def all_togeterRs(h_n2):
 
 df['test'] = twice_length * all_togeterRs(N2_average)
 
-
-
-
-
 #print("hi",new_way.head(50))
 
 
@@ -199,10 +195,6 @@ data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data
 
 
 
-#non_average_time = time_column.iloc[lower_parsed_data:upper_parsed_data]
-#print("Function_Result_R1:", df['Function_Result_R1'].head(50))
-#print("Function_Result_R2:", df['Function_Result_R2'].head(50))
-#print("volume(Argon):", df['volume(Argon)'].head(50))
 
 
 
@@ -225,6 +217,9 @@ or in math form
 ∂v(t)/∂t 
 ∂v(t)/∂t  = (∂v/∂t)(t)
 """
+
+
+
 
 """
 diff_of_v_argon = np.diff(volume_function_as_height)
@@ -375,11 +370,7 @@ y_data = data_we_use
 
 
 
-print(max(y_data),"This is the max value",len(y_data),"array size",len(x_data),"x array size")
-print(min(y_data),"This is the min value")
-#has_nan = np.isnan(x_data).any()
-#print(f"Array contains NaN values: {has_nan}")
-#max(y_data)
+
 # Initial guess for parameters A, B, and C
 
 
@@ -401,10 +392,6 @@ annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
-
-
-
-
 plt.xlabel('X')
 plt.ylabel('Y')
 #plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
@@ -416,5 +403,51 @@ plt.show()
 
 # Print the optimal parameters
 print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}")
+
+
+
+y_fit = np.gradient(y_fit)
+dx = np.gradient(parsed_time_average) #parsed time data
+dydx_new = y_fit/dx
+
+
+plt.figure(figsize=(10, 6))
+plt.plot(parsed_time_average,dydx_new, 'k-', label='Original')
+plt.ylabel("dy/dx argon level [inches^3]/[Seconds]")
+plt.xlabel("dx Time[s]")
+plt.title(" boil of rate[gradient method] with decayfit")
+plt.show()
+plt.legend()
+#plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
+plt.show()
+
+
+
+#calculate heat load 
+density_liquid_argon = 1410 #kg/m^3
+h_vap = 162.8 #kj/kg
+Inches_cube_to_meters_cubed = 1.63871*10**-5
+Q_heat = dydx_new * Inches_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
+
+#print(len(Q_heat))
+#print(Q_heat)
+
+
+plt.figure(figsize=(10, 6))
+plt.plot(parsed_time_average,Q_heat , 'k-', label='Original')
+plt.ylabel("Heatload [KJ]/[s] ")
+plt.xlabel("Time[s]")
+plt.title("Heat load plot by using decay fit data")
+plt.show()
+
+
+
+#mean_heat_load = Q_heat.mean() 
+mean_heat_load = np.nanmean(Q_heat)  # Use numpy's nanmean function to ignore nan values in the array
+print(mean_heat_load,"mean heat load in [kilojolues]/[second]")
+print("if we convert to [joules]/[second] we get",mean_heat_load*1000)
+#print(Q_heat)
+
+
 
 
