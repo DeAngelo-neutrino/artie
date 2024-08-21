@@ -63,7 +63,6 @@ plt.show()
 
 df = pd.read_csv(file_name, skiprows=9, sep=',' ) # we have to use , as delimitter and we use skiprows to ignore the first rows before the data
 
-#df_1 = pd.read_csv("log_all_chan_5_10-14_17_44.txt",header=None, sep=',')
 
 #df = df.iloc[9:] #this removes all of the stuff in the file before getting to the good data
 
@@ -100,19 +99,20 @@ plt.show()
 
 #math calculation
 
-lower = .98 #inches
-upper = 4.812 #inches
+lower = 2.4892 #cm #.98 inches
+upper = 12.22248 #cm  #4.812 #inches
 h_ = upper
 R_2 = upper
 R_2_cm = 12.22248 #cm
-L=67.7 #inches ^2
-v_h_0 = 961.4 #inches ^3
-R_1 = 4 #inches
+L= 171.958 #normally this is 67.7 inches  but we convert to cm so it is 
+v_h_0 = 15754.5233 #cm^3     #961.4 inches ^3
+R_1 = 10.16#cm #normally 4 inches
 R_1_cm = 10.16 #cm
 h__lower = R_1
 #what is v_R_1
 twice_length = 2*L
-h_zero = .98 #inches
+h_zero = 2.4892#cm #.98 #inches
+
 
 
 
@@ -158,8 +158,6 @@ Part_2_volume = 2*L *part_integration_2
 
 #we need to create functions that do the integral with different h values , because right now the h is static.
 #h will be whatever we call our argon array 
-
-
 # link to integral
 #https://en.wikipedia.org/wiki/List_of_integrals_of_irrational_functions
 
@@ -177,9 +175,7 @@ def all_togeterRs(h_n2):
 
 
 df['test'] = twice_length * all_togeterRs(N2_average)
-
 #print("hi",new_way.head(50))
-
 
 
 df['volume(Argon)'] =  v_h_0+(df['test']) + twice_length*full_integration #this is in inches^3
@@ -187,7 +183,7 @@ volume_function_as_height = df['volume(Argon)']
 
 
 
-lower_parsed_data = 7000 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
+lower_parsed_data = 6500 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
 upper_parsed_data = 9500 #this is the upper limit of where the data ends
 
 
@@ -195,6 +191,7 @@ data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data
 
 
 
+print("max volume",data_we_use.head())
 
 
 
@@ -333,8 +330,8 @@ plt.show()
 #calculate heat load 
 density_liquid_argon = 1410 #kg/m^3
 h_vap = 162.8 #kj/kg
-Inches_cube_to_meters_cubed = 1.63871*10**-5
-Q_heat = dydx * Inches_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
+centimeters_cube_to_meters_cubed = 1e-6
+Q_heat = dydx * centimeters_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
 
 #print(len(Q_heat))
 #print(Q_heat)
@@ -377,7 +374,7 @@ y_data = data_we_use
 # Initial guess for parameters A, B, and C
 
 
-B = 1*10**-8
+B = 1*10**-4
 initial_guess = [max(y_data),B, min(y_data)]
 
 # Perform the curve fitting
@@ -434,8 +431,8 @@ plt.show()
 #calculate heat load 
 density_liquid_argon = 1410 #kg/m^3
 h_vap = 162.8 #kj/kg
-Inches_cube_to_meters_cubed = 1.63871*10**-5
-Q_heat = dydx_new * Inches_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
+centimeters_cube_to_meters_cubed = 1e-6
+Q_heat = dydx_new * centimeters_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
 
 
 print("Heat_load",Q_heat[0])

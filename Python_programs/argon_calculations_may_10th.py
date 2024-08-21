@@ -100,19 +100,19 @@ plt.show()
 
 #math calculation
 
-lower = .98 #inches
-upper = 4.812 #inches
+lower = 2.4892 #cm #.98 inches
+upper = 12.22248 #cm  #4.812 #inches
 h_ = upper
 R_2 = upper
 R_2_cm = 12.22248 #cm
-L=67.7 #inches ^2
-v_h_0 = 961.4 #inches ^3
-R_1 = 4 #inches
+L= 171.958 #normally this is 67.7 inches  but we convert to cm so it is 
+v_h_0 = 15754.5233 #cm^3     #961.4 inches ^3
+R_1 = 10.16#cm #normally 4 inches
 R_1_cm = 10.16 #cm
 h__lower = R_1
 #what is v_R_1
 twice_length = 2*L
-h_zero = .98 #inches
+h_zero = 2.4892#cm #.98 #inches
 
 
 
@@ -182,28 +182,28 @@ df['test'] = twice_length * all_togeterRs(N2_average)
 
 
 
-df['volume(Argon)'] =  v_h_0+(df['test']) + twice_length*full_integration #this is in inches^3
+df['volume(Argon)'] =  v_h_0+(df['test']) + twice_length*full_integration #this is in cm^3
 volume_function_as_height = df['volume(Argon)']
 
 
 
-lower_parsed_data = 7000 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
-upper_parsed_data = 9500 #this is the upper limit of where the data ends
+lower_parsed_data = 6500 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
+upper_parsed_data = 10000 #this is the upper limit of where the data ends
 
 
 data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data]
 
 
-
+print("max volume",data_we_use.head())
 
 
 
 plt.figure(4)
 plt.plot(volume_function_as_height, 'r-', label='Original')
 #plt.plot(N2_average, 'g-', label='Original') 
-plt.ylabel("Argon Level volume [in^3] as a function of height")
+plt.ylabel("Argon Level volume [cm^3] as a function of height")
 plt.xlabel("Time[s]")
-plt.title(" Time vs  Argon Level volume [in^3] as a function of height")
+plt.title(" Time vs  Argon Level volume [cm^3] as a function of height")
 plt.show()
 
 
@@ -237,9 +237,9 @@ print(len(dydx_0))
 plt.figure(5)
 plt.plot(data_we_use, 'r-', label='Original')
 #plt.plot(N2_average, 'g-', label='Original') 
-plt.ylabel("volume as a function of height selected data [in^3]")
+plt.ylabel("volume as a function of height selected data [cm^3]")
 plt.xlabel("Time[s]")
-plt.title(" Selected Data Chart 6500s to 10000s vs Volume[in^3]")
+plt.title(" Selected Data Chart 6500s to 10000s vs Volume[cm^3]")
 plt.show()
 
 
@@ -319,8 +319,8 @@ plt.show()
 
 plt.figure(6)
 plt.plot(parsed_time_average,dydx, 'k-', label='Original')
-plt.ylabel("dy argon level [inches^3]")
-plt.xlabel("dx Time[s]")
+plt.ylabel("dv/dt argon level [cm^3]/[seconds]")
+plt.xlabel("dt Time[s]")
 plt.title(" boil of rate[gradient method]")
 plt.show()
 
@@ -333,11 +333,10 @@ plt.show()
 #calculate heat load 
 density_liquid_argon = 1410 #kg/m^3
 h_vap = 162.8 #kj/kg
-Inches_cube_to_meters_cubed = 1.63871*10**-5
-Q_heat = dydx * Inches_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
+centimeters_cube_to_meters_cubed = 1e-6
+Q_heat = dydx * centimeters_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx because different sizes of array.
 
-#print(len(Q_heat))
-#print(Q_heat)
+
 
 
 plt.figure(7)
@@ -350,8 +349,8 @@ plt.show()
 
 #mean_heat_load = Q_heat.mean() 
 mean_heat_load = np.nanmean(Q_heat)  # Use numpy's nanmean function to ignore nan values in the array
-print(mean_heat_load,"mean heat load in [kilojolues]/[second]")
-print("if we convert to [joules]/[second] we get",mean_heat_load*1000,'\n')
+#print(mean_heat_load,"mean heat load in [kilojolues]/[second]")
+#print("if we convert to [joules]/[second] we get",mean_heat_load*1000,'\n')
 #print(Q_heat)
 
 
@@ -377,7 +376,8 @@ y_data = data_we_use
 # Initial guess for parameters A, B, and C
 
 
-B = 1*10**-8
+B = 1*10**-4
+
 initial_guess = [max(y_data),B, min(y_data)]
 
 # Perform the curve fitting
@@ -395,8 +395,8 @@ annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
-plt.xlabel('X')
-plt.ylabel('Y')
+plt.xlabel('Time[Seconds]')
+plt.ylabel('Volume [cm^3]')
 #plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
 plt.title('Exponential Decay Fit')
 plt.legend()
@@ -421,7 +421,7 @@ dydx_new = y_fit/dx
 
 plt.figure(figsize=(10, 6))
 plt.plot(parsed_time_average,dydx_new, 'k-', label='Original')
-plt.ylabel("dv/dt argon level [inches^3]/[Seconds]")
+plt.ylabel("dv/dt argon level [cm^3]/[Seconds]")
 plt.xlabel("dt Time[s]")
 plt.title(" boil of rate[gradient method] with decayfit")
 plt.show()
@@ -434,8 +434,8 @@ plt.show()
 #calculate heat load 
 density_liquid_argon = 1410 #kg/m^3
 h_vap = 162.8 #kj/kg
-Inches_cube_to_meters_cubed = 1.63871*10**-5
-Q_heat = dydx_new * Inches_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
+centimeters_cube_to_meters_cubed = 1e-6
+Q_heat = dydx_new * centimeters_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
 
 
 print("Heat_load",Q_heat[0])
