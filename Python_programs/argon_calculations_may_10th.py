@@ -61,7 +61,7 @@ plt.show()
 
 #now we want to try to do a average we are gonna try using pandas
 
-df = pd.read_csv("log_all_chan_5_10-14_17_44.txt", skiprows=9, sep=',' ) # we have to use , as delimitter and we use skiprows to ignore the first rows before the data
+df = pd.read_csv(file_name, skiprows=9, sep=',' ) # we have to use , as delimitter and we use skiprows to ignore the first rows before the data
 
 #df_1 = pd.read_csv("log_all_chan_5_10-14_17_44.txt",header=None, sep=',')
 
@@ -74,21 +74,75 @@ df = pd.read_csv("log_all_chan_5_10-14_17_44.txt", skiprows=9, sep=',' ) # we ha
 
 
 
-window_size = 900 #900 was intial value
+window_size = 400 #900 was intial value
 
 time_column = df['Time (s)']
 N2_level_dataseries = df['N2 Level']
-N2_average = N2_level_dataseries.rolling(window = window_size).mean() #creates an average of 30 ( look up what is a rolling average do?)
+N2_average = N2_level_dataseries.rolling(window = window_size).mean() #creates an average of 900
 #print(time_column)
 #print("This is the average with a window of 30" , N2_average)
 
 
+#do a function for a set of 30 average with a step of 30
+
+size_number = 400
+
+n_2_size = len(N2_level)
+n_2_array = []
+segmentsize =size_number
+step_size = size_number
+
+for i in range(0, n_2_size-segmentsize+1,step_size ):
+    
+    segment = N2_level[i:i + segmentsize]
+    
+    # Calculate the average of the segment
+    segment_average = np.mean(segment)
+    
+    # Append the average to the list
+    n_2_array.append(segment_average)
+    
+
+
+
+segmentsize =size_number 
+step_size = size_number
+time_size = len(time_argon)
+time_array = []
+
+for i in range(0, time_size-segmentsize+1,step_size ):
+    
+    segment_time = time_argon[i:i + segmentsize]
+    
+    # Calculate the average of the segment
+    segment_average = np.mean(segment_time)
+    
+    # Append the average to the list
+    time_array.append(segment_average)
+
+
+
+
+
+
 plt.figure(3)
 plt.plot(N2_level_dataseries, 'k-', label='Original')
-plt.plot(N2_average, 'g-', label='Original') 
+plt.plot(N2_average, 'g.', label='Original') 
+plt.plot(time_array,n_2_array,'b.',label="with a step of 30")
 plt.ylabel("Argon Level [cm]")
 plt.xlabel("Time[s]")
+plt.title("time vs argon level")
 plt.show()
+
+
+
+
+
+    
+    
+
+
+
 
 
 #link to volume of a hallow sphere 
@@ -197,7 +251,6 @@ data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data
 print("max volume",data_we_use.head())
 
 
-
 plt.figure(4)
 plt.plot(volume_function_as_height, 'r-', label='Original')
 #plt.plot(N2_average, 'g-', label='Original') 
@@ -205,6 +258,8 @@ plt.ylabel("Argon Level volume [cm^3] as a function of height")
 plt.xlabel("Time[s]")
 plt.title(" Time vs  Argon Level volume [cm^3] as a function of height")
 plt.show()
+
+
 
 
 
@@ -266,6 +321,20 @@ dx = np.gradient(parsed_time_average) #parsed time data
 dydx = dy/dx
 
 
+step_size_parsed = n_2_array[5:20]
+time_sized_parsed = time_array[5:20]
+stepsize_grad = np.gradient(step_size_parsed)
+timesize_grad = np.gradient(time_sized_parsed)
+
+
+
+dy_dx_stepsize  = stepsize_grad/timesize_grad
+plt.figure(17)
+plt.plot(timesize_grad,dy_dx_stepsize, 'k-', label='Original')
+plt.ylabel("dv/dt argon level [cm^3]/[seconds]")
+plt.xlabel("dt Time[s]")
+plt.title(" boil of rate[gradient method]")
+plt.show()
 
 
 
@@ -315,6 +384,9 @@ plt.grid()
 plt.show()
 #sometimes the reason why the spline is messing up is because it can not plot the discontinous function
 """
+
+
+
 
 
 plt.figure(6)

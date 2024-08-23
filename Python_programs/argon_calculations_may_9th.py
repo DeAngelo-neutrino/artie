@@ -24,7 +24,6 @@ os.chdir("/Users/dwooley/Desktop/Python_programs/")
 
 #we need to create varibles that are assoicated with each channel so we can plot, (This has been complete.)
 #This creates an array/ column of data
-file_name_1 = "log_all_chan_5_10-14_17_44.txt"
 file_name = "log_all_chan_5_9-15_5_57.txt"
 time_argon = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(0))   
 target_top = np.genfromtxt(file_name,skip_header=9, delimiter=",", usecols=(1))   
