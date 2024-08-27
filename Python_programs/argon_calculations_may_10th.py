@@ -126,14 +126,24 @@ for i in range(0, time_size-segmentsize+1,step_size ):
 
 
 plt.figure(3)
+plt.plot(N2_level_dataseries, 'r.', label='Original')
+plt.plot(N2_average, 'g.', label='window size 400') 
+plt.plot(time_array,n_2_array,'b.',label="with a step of 400")
+plt.ylabel("Argon Level [cm]")
+plt.xlabel("Time[s]")
+plt.title("time vs argon level")
+plt.legend()
+plt.show()
+
+
+
+plt.figure(13)
 plt.plot(N2_level_dataseries, 'k-', label='Original')
-plt.plot(N2_average, 'g.', label='Original') 
 plt.plot(time_array,n_2_array,'b.',label="with a step of 30")
 plt.ylabel("Argon Level [cm]")
 plt.xlabel("Time[s]")
 plt.title("time vs argon level")
 plt.show()
-
 
 
 
@@ -256,7 +266,7 @@ plt.plot(volume_function_as_height, 'r-', label='Original')
 #plt.plot(N2_average, 'g-', label='Original') 
 plt.ylabel("Argon Level volume [cm^3] as a function of height")
 plt.xlabel("Time[s]")
-plt.title(" Time vs  Argon Level volume [cm^3] as a function of height")
+plt.title(" Time vs  Argon Level volume [cm^3] as a function of height Rolling average")
 plt.show()
 
 
@@ -320,7 +330,7 @@ dy= np.gradient(data_we_use) #parsed argon level data
 dx = np.gradient(parsed_time_average) #parsed time data
 dydx = dy/dx
 
-
+"""
 step_size_parsed = n_2_array[5:20]
 time_sized_parsed = time_array[5:20]
 stepsize_grad = np.gradient(step_size_parsed)
@@ -335,54 +345,6 @@ plt.ylabel("dv/dt argon level [cm^3]/[seconds]")
 plt.xlabel("dt Time[s]")
 plt.title(" boil of rate[gradient method]")
 plt.show()
-
-
-
-"""
-degree = 2
-coefficients = np.polyfit(parsed_time_average, dydx, degree)
-poly = np.poly1d(coefficients)
-# Generate fitted values
-fitted_values = poly(parsed_time_average)
-
-plt.figure(9)
-plt.plot(parsed_time_average, fitted_values, color='red', label=f'Polyfit (degree {degree})')
-#plt.scatter(parsed_time_average, dydx, label='Data')
-
-plt.xlabel('Parsed Time Average')
-plt.ylabel('dydx')
-plt.legend()
-plt.show()
-"""
-
-
-
-"""
-# Fit a spline to the data
-spline = UnivariateSpline(parsed_time_average, dydx, s=1)
-
-fitted_values = spline(parsed_time_average)
-
-coefficients = spline.get_coeffs()
-equation = "Spline equation:\n"
-if coefficients.size >0:
-    equation += "f(x) = " + " + ".join(f"{coeff:.2f}*x^{i}" for i, coeff in enumerate(coefficients))
-else:
-    equation += "No coefficients available."
-
-# Plot the results
-plt.figure(9)
-plt.scatter(parsed_time_average, dydx, label='Data')
-plt.plot(parsed_time_average, fitted_values, color='red', label='Spline Fit')
-plt.text(0.05, 0.95, equation, transform=plt.gca().transAxes,
-         fontsize=5, verticalalignment='top', bbox=dict(boxstyle='round', alpha=0.1))
-
-plt.xlabel('Parsed Time Average [seconds]')
-plt.ylabel('dydx [inch^3]/[seconds]')
-plt.legend()
-plt.grid()
-plt.show()
-#sometimes the reason why the spline is messing up is because it can not plot the discontinous function
 """
 
 
@@ -473,11 +435,62 @@ plt.ylabel('Volume [cm^3]')
 plt.title('Exponential Decay Fit')
 plt.legend()
 plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
-plt
 plt.show()
 
 # Print the optimal parameters
 print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
+
+
+
+set_average_30_parsed_lower = 6500
+set_average_30_parsed_higher = 10000
+
+
+plt.figure(13)
+plt.plot(N2_level_dataseries, 'k-', label='Original')
+plt.plot(time_array,n_2_array,'b.',label="with a step of 400")
+plt.ylabel("Argon Level [cm]")
+plt.xlabel("Time[s]")
+plt.title("time vs argon level")
+plt.show()
+
+
+
+
+
+
+# we need to do this calculation but with the new step size average
+
+
+df_1 = pd.DataFrame(n_2_array,time_array) # the new df all the columns have to be of the same length
+segment_N2_array = df_1
+#print(df_1)
+df_1['step_size_30'] = twice_length * all_togeterRs(segment_N2_array)
+df_1['volume(Argon)_segment'] =  v_h_0+(df_1['step_size_30']) + twice_length*full_integration #this is in cm^3
+volume_function_as_height_segment = df_1['volume(Argon)_segment']
+
+
+print(df.head())
+#now we need to do the same thing but with the orginal data
+df['orginal'] = twice_length * all_togeterRs(df['N2 Level'])
+df['volume(Argon)_orginal'] =  v_h_0+(df['orginal']) + twice_length*full_integration #this is in cm^3
+volume_function_as_height_orginal = df['volume(Argon)_orginal']
+
+
+
+
+
+plt.figure(17)
+plt.plot(volume_function_as_height_orginal, 'r.', label='volume as a function of height no averaging')
+plt.plot(volume_function_as_height, 'k.', label='volume as a function of height rolling average widow size 400')
+plt.plot(time_array,volume_function_as_height_segment,'b.',label="with a step of 400")
+plt.ylabel("Argon volume [cm^3]")
+plt.xlabel("Time[s]")
+plt.title("time vs argon level volume[cm^3] [May 10th Data]")
+plt.legend()
+plt.show()
+
+
 
 
 

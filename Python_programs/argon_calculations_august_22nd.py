@@ -78,7 +78,7 @@ df = pd.read_csv(file_name, skiprows=9, sep=',' ) # we have to use , as delimitt
 window_size = 900 #900 was intial value
 
 time_column = df['Time (s)']
-N2_level_dataseries = df['N2 Level']
+N2_level_dataseries = df['N2 Level'] # we can add +2 to account for baseline shift if we want to 
 N2_average = N2_level_dataseries.rolling(window = window_size).mean() #creates an average of 900
 #print(time_column)
 #print("This is the average with a window of 30" , N2_average)
@@ -86,7 +86,7 @@ N2_average = N2_level_dataseries.rolling(window = window_size).mean() #creates a
 
 #do a function for a set of 30 average with a step of 30
 
-size_number = 400
+size_number = 900
 
 n_2_size = len(N2_level)
 n_2_array = []
@@ -129,7 +129,7 @@ for i in range(0, time_size-segmentsize+1,step_size ):
 plt.figure(3)
 plt.plot(N2_level_dataseries, 'k-', label='Original')
 plt.plot(N2_average, 'g.', label='Original') 
-plt.plot(time_array,n_2_array,'b.',label="with a step of 30")
+#plt.plot(time_array,n_2_array,'b.',label="with a step of 30")
 plt.ylabel("Argon Level [cm]")
 plt.xlabel("Time[s]")
 plt.title("time vs argon level")
@@ -248,7 +248,7 @@ upper_parsed_data = 13000 #this is the upper limit of where the data ends
 
 data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data]
 
-
+ 
 print("max volume",data_we_use.head())
 
 
@@ -514,7 +514,7 @@ centimeters_cube_to_meters_cubed = 1e-6
 Q_heat = dydx_new * centimeters_cube_to_meters_cubed * h_vap*density_liquid_argon #need to use dydx and not dydx_0 because different sizes of array.
 
 
-print("Heat_load",Q_heat[0])
+print("Heat_load [kj]/[s]",Q_heat[0])
 print("time",parsed_time_average[lower_parsed_data],'\n')
 
 
