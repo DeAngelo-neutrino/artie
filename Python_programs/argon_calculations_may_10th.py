@@ -427,7 +427,7 @@ y_fit = exponential_decay(x_data, *popt)
 # Plot data and fit
 annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2f}')
 plt.figure(figsize=(10, 6))
-plt.plot(x_data, y_data, 'g-',label='Data')
+plt.plot(x_data, y_data, 'g-',label='rolling average Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
 plt.xlabel('Time[Seconds]')
 plt.ylabel('Volume [cm^3]')
@@ -442,8 +442,141 @@ print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
 
 
 
-set_average_30_parsed_lower = 6500
-set_average_30_parsed_higher = 10000
+
+df_1 = pd.DataFrame(n_2_array,time_array) # the new df all the columns have to be of the same length
+df_1.columns = ['N2_segment',]
+segment_N2_array = df_1
+df_1['step_size_30'] = twice_length * all_togeterRs(segment_N2_array)
+df_1['volume(Argon)_segment'] =  v_h_0+(df_1['step_size_30']) + twice_length*full_integration #this is in cm^3
+volume_function_as_height_segment = df_1['volume(Argon)_segment']
+#print(df_1)
+df_1['time_segment'] = time_array
+
+
+segmented_lower = 15
+segmented_upper = 22
+
+
+#print("hello aoaondoiafjdkn '\n ")
+#print(time_array)
+#print(df_1['Time_array'])
+segmented_time = df_1['time_segment']
+
+
+#print(df_1['time_array'],"time array")
+#this is for orginal data
+parse_segmented = volume_function_as_height_segment.iloc[segmented_lower:segmented_upper] 
+parsed_time_segmented = segmented_time.iloc[segmented_lower:segmented_upper]
+
+x_data = parsed_time_segmented  
+y_data = parse_segmented
+
+
+
+B = 1*10**-4
+initial_guess = [max(y_data),B, min(y_data)]
+
+# Perform the curve fitting
+popt, pcov  = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess,maxfev=10000)
+
+# Extract the optimal parameters
+A_opt, B_opt, C_opt = popt
+
+# Generate y values using the fitted parameters
+y_fit = exponential_decay(x_data, *popt)
+
+
+# Plot data and fit
+annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2f}')
+plt.figure(figsize=(10, 6))
+plt.plot(x_data, y_data, 'g-',label='Segmented data ')
+plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
+plt.xlabel('Time [Seconds]')
+plt.ylabel('Volume as a function of height [cm^3]')
+#plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
+plt.title('Exponential Decay Fit')
+plt.legend()
+plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
+plt
+plt.show()
+
+# Print the optimal parameters
+print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
+
+
+
+
+
+
+
+
+
+
+
+print(df.head())
+#now we need to do the same thing but with the orginal data
+df['orginal'] = twice_length * all_togeterRs(df['N2 Level'])
+df['volume(Argon)_orginal'] =  v_h_0+(df['orginal']) + twice_length*full_integration #this is in cm^3
+volume_function_as_height_orginal = df['volume(Argon)_orginal']
+
+
+
+#this is for orginal data
+parse_orginal = volume_function_as_height_orginal.iloc[lower_parsed_data:upper_parsed_data] 
+
+
+x_data = parsed_time_average  
+y_data = parse_orginal 
+
+
+
+B = 1*10**-4
+initial_guess = [max(y_data),B, min(y_data)]
+
+# Perform the curve fitting
+popt, pcov  = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess,maxfev=10000)
+
+# Extract the optimal parameters
+A_opt, B_opt, C_opt = popt
+
+# Generate y values using the fitted parameters
+y_fit = exponential_decay(x_data, *popt)
+
+
+# Plot data and fit
+annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2f}')
+plt.figure(figsize=(10, 6))
+plt.plot(x_data, y_data, 'g-',label='orginal data no fit')
+plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
+plt.xlabel('X')
+plt.ylabel('Y')
+#plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
+plt.title('Exponential Decay Fit')
+plt.legend()
+plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
+plt
+plt.show()
+
+# Print the optimal parameters
+print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 plt.figure(13)

@@ -388,10 +388,10 @@ y_fit = exponential_decay(x_data, *popt)
 # Plot data and fit
 annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2f}')
 plt.figure(figsize=(10, 6))
-plt.plot(x_data, y_data, 'g-',label='Data')
+plt.plot(x_data, y_data, 'g-',label='rolling average  Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
-plt.xlabel('X')
-plt.ylabel('Y')
+plt.xlabel('Time [Seconds]')
+plt.ylabel('Volume as a function of height [cm^3]')
 #plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
 plt.title('Exponential Decay Fit')
 plt.legend()
@@ -410,7 +410,6 @@ print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
 df_1 = pd.DataFrame(n_2_array,time_array) # the new df all the columns have to be of the same length
 df_1.columns = ['N2_segment',]
 segment_N2_array = df_1
-
 df_1['step_size_30'] = twice_length * all_togeterRs(segment_N2_array)
 df_1['volume(Argon)_segment'] =  v_h_0+(df_1['step_size_30']) + twice_length*full_integration #this is in cm^3
 volume_function_as_height_segment = df_1['volume(Argon)_segment']
@@ -422,8 +421,8 @@ segmented_lower = 9
 segmented_upper = 22
 
 
-print("hello aoaondoiafjdkn '\n ")
-print(time_array)
+#print("hello aoaondoiafjdkn '\n ")
+#print(time_array)
 #print(df_1['Time_array'])
 segmented_time = df_1['time_segment']
 
@@ -456,8 +455,8 @@ annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Segmented data ')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
-plt.xlabel('X')
-plt.ylabel('Y')
+plt.xlabel('Time [Seconds]')
+plt.ylabel('Volume as a function of height [cm^3]')
 #plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
 plt.title('Exponential Decay Fit')
 plt.legend()
