@@ -225,7 +225,7 @@ volume_function_as_height = df['volume(Argon)']
 
 
 lower_parsed_data = 6500 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
-upper_parsed_data = 9500 #this is the upper limit of where the data ends
+upper_parsed_data = 8700 #this is the upper limit of where the data ends
 
 
 data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data]
@@ -384,9 +384,17 @@ A_opt, B_opt, C_opt = popt
 # Generate y values using the fitted parameters
 y_fit = exponential_decay(x_data, *popt)
 
+#how to get errors https://stackoverflow.com/questions/43561036/how-do-i-use-pcov-in-python-to-get-errors-for-each-parameter
+perr = np.sqrt(np.diag(pcov))
+
+# Extract parameter errors
+A_err, B_err, C_err = perr
+print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
+
+
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}')
+annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}\n   f"Parameter errors: ΔA = {A_err} \n  ΔB = {B_err} \n  ΔC = {C_err}"' )
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='rolling average  Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -449,9 +457,17 @@ A_opt, B_opt, C_opt = popt
 # Generate y values using the fitted parameters
 y_fit = exponential_decay(x_data, *popt)
 
+#how to get errors https://stackoverflow.com/questions/43561036/how-do-i-use-pcov-in-python-to-get-errors-for-each-parameter
+perr = np.sqrt(np.diag(pcov))
+
+# Extract parameter errors
+A_err, B_err, C_err = perr
+print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
+
+
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2f}')
+annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}\n   f"Parameter errors: ΔA = {A_err} \n  ΔB = {B_err} \n  ΔC = {C_err}"' )
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Segmented data ')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -506,9 +522,17 @@ A_opt, B_opt, C_opt = popt
 # Generate y values using the fitted parameters
 y_fit = exponential_decay(x_data, *popt)
 
+#how to get errors https://stackoverflow.com/questions/43561036/how-do-i-use-pcov-in-python-to-get-errors-for-each-parameter
+perr = np.sqrt(np.diag(pcov))
+
+# Extract parameter errors
+A_err, B_err, C_err = perr
+print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
+
+
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2f}')
+annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}\n   f"Parameter errors: ΔA = {A_err} \n  ΔB = {B_err} \n  ΔC = {C_err}"' )
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='orginal data no fit')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
