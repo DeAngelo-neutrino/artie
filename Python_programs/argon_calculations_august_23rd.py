@@ -243,7 +243,7 @@ volume_function_as_height = df['volume(Argon)']
 
 
 lower_parsed_data = 5000 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
-upper_parsed_data = 7500 #this is the upper limit of where the data ends
+upper_parsed_data = 7000 #this is the upper limit of where the data ends
 
 
 data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data]
@@ -464,7 +464,7 @@ B = 1*10**-8
 initial_guess = [max(y_data),B, min(y_data)]
 
 # Perform the curve fitting
-popt, pcov  = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess,maxfev=10000) #for this to work we needed to add the maxfev command
+popt, pcov  = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess,maxfev=30000) #for this to work we needed to add the maxfev command
 
 # Extract the optimal parameters
 A_opt, B_opt, C_opt = popt

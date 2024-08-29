@@ -386,7 +386,7 @@ y_fit = exponential_decay(x_data, *popt)
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n'     f'C = {C_opt:.2f}')
+annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='rolling average  Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -417,7 +417,7 @@ volume_function_as_height_segment = df_1['volume(Argon)_segment']
 df_1['time_segment'] = time_array
 
 
-segmented_lower = 9
+segmented_lower = 15
 segmented_upper = 22
 
 
