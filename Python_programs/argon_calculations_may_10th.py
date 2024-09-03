@@ -251,8 +251,8 @@ volume_function_as_height = df['volume(Argon)']
 
 
 
-lower_parsed_data = 6500 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
-upper_parsed_data = 8500 #this is the upper limit of where the data ends
+lower_parsed_data = 3300 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
+upper_parsed_data = 9000 #this is the upper limit of where the data ends
 
 
 data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data]
@@ -438,7 +438,7 @@ sigma_C = C_err
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n'  f'y = A*e^(-B*x)+C\n')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='rolling average Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -511,7 +511,7 @@ sigma_C = C_err
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' f'y = A*e^(-B*x)+C\n')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Segmented data ')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -579,7 +579,7 @@ sigma_C = C_err
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' f'y = A*e^(-B*x)+C\n')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='orginal data no fit')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')

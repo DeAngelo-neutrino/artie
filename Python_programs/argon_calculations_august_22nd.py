@@ -321,74 +321,6 @@ dy= np.gradient(data_we_use) #parsed argon level data
 dx = np.gradient(parsed_time_average) #parsed time data
 dydx = dy/dx
 
-#this is for the step size of 30 with an average of 30
-
-"""
-step_size_parsed = n_2_array[5:20]
-time_sized_parsed = time_array[5:20]
-stepsize_grad = np.gradient(step_size_parsed)
-timesize_grad = np.gradient(time_sized_parsed)
-
-
-
-dy_dx_stepsize  = stepsize_grad/timesize_grad
-plt.figure(17)
-plt.plot(timesize_grad,dy_dx_stepsize, 'k-', label='Original')
-plt.ylabel("dv/dt argon level [cm^3]/[seconds]")
-plt.xlabel("dt Time[s]")
-plt.title(" boil of rate[gradient method]")
-plt.show()
-"""
-
-
-"""
-degree = 2
-coefficients = np.polyfit(parsed_time_average, dydx, degree)
-poly = np.poly1d(coefficients)
-# Generate fitted values
-fitted_values = poly(parsed_time_average)
-
-plt.figure(9)
-plt.plot(parsed_time_average, fitted_values, color='red', label=f'Polyfit (degree {degree})')
-#plt.scatter(parsed_time_average, dydx, label='Data')
-
-plt.xlabel('Parsed Time Average')
-plt.ylabel('dydx')
-plt.legend()
-plt.show()
-"""
-
-
-
-"""
-# Fit a spline to the data
-spline = UnivariateSpline(parsed_time_average, dydx, s=1)
-
-fitted_values = spline(parsed_time_average)
-
-coefficients = spline.get_coeffs()
-equation = "Spline equation:\n"
-if coefficients.size >0:
-    equation += "f(x) = " + " + ".join(f"{coeff:.2f}*x^{i}" for i, coeff in enumerate(coefficients))
-else:
-    equation += "No coefficients available."
-
-# Plot the results
-plt.figure(9)
-plt.scatter(parsed_time_average, dydx, label='Data')
-plt.plot(parsed_time_average, fitted_values, color='red', label='Spline Fit')
-plt.text(0.05, 0.95, equation, transform=plt.gca().transAxes,
-         fontsize=5, verticalalignment='top', bbox=dict(boxstyle='round', alpha=0.1))
-
-plt.xlabel('Parsed Time Average [seconds]')
-plt.ylabel('dydx [inch^3]/[seconds]')
-plt.legend()
-plt.grid()
-plt.show()
-#sometimes the reason why the spline is messing up is because it can not plot the discontinous function
-"""
-
-
 
 
 
@@ -472,12 +404,25 @@ A_opt, B_opt, C_opt = popt
 # Generate y values using the fitted parameters
 y_fit = exponential_decay(x_data, *popt)
 
+perr = np.sqrt(np.diag(pcov))
+
+
+#how to get errors https://stackoverflow.com/questions/43561036/how-do-i-use-pcov-in-python-to-get-errors-for-each-parameter
+# Extract parameter errors
+A_err, B_err, C_err = perr
+print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
+
+
+sigma_A = A_err
+sigma_B = B_err
+sigma_C = C_err
+
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}')
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Data')
-plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
+plt.plot(x_data, y_fit, label='Rolling average decay data fit', color='blue')
 plt.xlabel('Time[Seconds]')
 plt.ylabel('Volume [cm^3]')
 plt.title('Exponential Decay Fit')
@@ -491,9 +436,18 @@ print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
 
 
 
+
+
+
+
+
 y_fit = np.gradient(y_fit)
 dx = np.gradient(parsed_time_average) #parsed time data
 dydx_new = y_fit/dx
+
+
+
+
 
 plt.figure(figsize=(10, 6))
 plt.plot(parsed_time_average,dydx_new, 'k-', label='Original')
@@ -539,6 +493,93 @@ print("if we convert to [joules]/[second] we get",mean_heat_load*1000,'\n')
 mean_boil_off_rate = np.nanmean(dydx_new)  
 print("this is the mean of dv/dt",mean_boil_off_rate)
 
+
+
+
+
+
+df_1 = pd.DataFrame(n_2_array,time_array) # the new df all the columns have to be of the same length
+df_1.columns = ['N2_segment',]
+segment_N2_array = df_1
+df_1['step_size_30'] = twice_length * all_togeterRs(segment_N2_array)
+df_1['volume(Argon)_segment'] =  v_h_0+(df_1['step_size_30']) + twice_length*full_integration #this is in cm^3
+volume_function_as_height_segment = df_1['volume(Argon)_segment']
+#print(df_1)
+df_1['time_segment'] = time_array
+
+
+segmented_lower = 7
+segmented_upper = 14
+
+
+#print("hello aoaondoiafjdkn '\n ")
+#print(time_array)
+#print(df_1['Time_array'])
+segmented_time = df_1['time_segment']
+
+
+#print(df_1['time_array'],"time array")
+#this is for orginal data
+parse_segmented = volume_function_as_height_segment.iloc[segmented_lower:segmented_upper] 
+parsed_time_segmented = segmented_time.iloc[segmented_lower:segmented_upper]
+
+x_data = parsed_time_segmented  
+y_data = parse_segmented
+
+
+
+B = 1*10**-4
+initial_guess = [max(y_data),B, min(y_data)]
+
+# Perform the curve fitting
+popt, pcov  = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess,maxfev=10000)
+
+# Extract the optimal parameters
+A_opt, B_opt, C_opt = popt
+
+# Generate y values using the fitted parameters
+y_fit = exponential_decay(x_data, *popt)
+
+#how to get errors https://stackoverflow.com/questions/43561036/how-do-i-use-pcov-in-python-to-get-errors-for-each-parameter
+perr = np.sqrt(np.diag(pcov))
+
+# Extract parameter errors
+A_err, B_err, C_err = perr
+print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
+
+sigma_A = A_err
+sigma_B = B_err
+sigma_C = C_err
+
+
+# Plot data and fit
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+plt.figure(figsize=(10, 6))
+plt.plot(x_data, y_data, 'g-',label='Segmented data ')
+plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
+plt.xlabel('Time [Seconds]')
+plt.ylabel('Volume as a function of height [cm^3]')
+#plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
+plt.title('Exponential Decay Fit')
+plt.legend()
+plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
+plt
+plt.show()
+
+# Print the optimal parameters
+print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
+
+
+
+plt.figure(17)
+#plt.plot(volume_function_as_height_orginal, 'r.', label='volume as a function of height no averaging')
+plt.plot(volume_function_as_height, 'k.', label='volume as a function of height rolling average widow size 400')
+plt.plot(time_array,volume_function_as_height_segment,'b.',label="with a step of 400")
+plt.ylabel("Argon volume [cm^3]")
+plt.xlabel("Time[s]")
+plt.title("time vs argon level volume[cm^3] [May 9th Data]")
+plt.legend()
+plt.show()
 
 
 

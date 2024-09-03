@@ -408,7 +408,7 @@ print("this is uncertainty in dv/dt",sigma_dy_dx[0:5],'\n')
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n'  f'y = A*e^(-B*x)+C\n')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='rolling average  Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -486,7 +486,7 @@ sigma_C = C_err
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' f'y = A*e^(-B*x)+C\n')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Segmented data ')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -496,7 +496,6 @@ plt.ylabel('Volume as a function of height [cm^3]')
 plt.title('Exponential Decay Fit')
 plt.legend()
 plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
-plt
 plt.show()
 
 # Print the optimal parameters
@@ -555,7 +554,7 @@ sigma_C = C_err
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' f'y = A*e^(-B*x)+C\n')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='orginal data no fit')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
