@@ -425,7 +425,7 @@ plt.plot(x_data, y_data, 'g-',label='Data')
 plt.plot(x_data, y_fit, label='Rolling average decay data fit', color='blue')
 plt.xlabel('Time[Seconds]')
 plt.ylabel('Volume [cm^3]')
-plt.title('Exponential Decay Fit')
+plt.title('Exponential Decay Fit August 22nd Data')
 plt.legend()
 plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
 plt
