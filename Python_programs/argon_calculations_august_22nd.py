@@ -242,8 +242,8 @@ volume_function_as_height = df['volume(Argon)']
 
 
 
-lower_parsed_data = 7000 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
-upper_parsed_data = 13000 #this is the upper limit of where the data ends
+lower_parsed_data = 7500 # this is the lower limit of where the data starts #previous value was 3000, for spline this only works for 7000 to 10000 with window size 900
+upper_parsed_data = 12000 #this is the upper limit of where the data ends
 
 
 data_we_use = volume_function_as_height.iloc[lower_parsed_data:upper_parsed_data]
@@ -367,7 +367,7 @@ mean_heat_load = np.nanmean(Q_heat)  # Use numpy's nanmean function to ignore na
 
 
 def exponential_decay(x, A, B, C):
-    return  A* np.exp(-B * x) + C
+    return  -A* np.exp(-B * x) + C
 
 
 x_data = parsed_time_average  
@@ -509,7 +509,7 @@ df_1['time_segment'] = time_array
 
 
 segmented_lower = 7
-segmented_upper = 14
+segmented_upper = 13
 
 
 #print("hello aoaondoiafjdkn '\n ")
@@ -518,17 +518,19 @@ segmented_upper = 14
 segmented_time = df_1['time_segment']
 
 
-#print(df_1['time_array'],"time array")
-#this is for orginal data
+
+#this is for segmented data
 parse_segmented = volume_function_as_height_segment.iloc[segmented_lower:segmented_upper] 
 parsed_time_segmented = segmented_time.iloc[segmented_lower:segmented_upper]
 
 x_data = parsed_time_segmented  
 y_data = parse_segmented
 
+def exponential_decay(x, A, B, C):
+    return  -A* np.exp(-B * x) + C
 
 
-B = 1*10**-4
+B = 1*10**-10
 initial_guess = [max(y_data),B, min(y_data)]
 
 # Perform the curve fitting
@@ -553,14 +555,14 @@ sigma_C = C_err
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' f'y = -A*e^(-B*x)+C\n')
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Segmented data ')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
 plt.xlabel('Time [Seconds]')
 plt.ylabel('Volume as a function of height [cm^3]')
 #plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
-plt.title('Exponential Decay Fit')
+plt.title('Exponential Decay Fit August 22nd Data')
 plt.legend()
 plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
 plt
