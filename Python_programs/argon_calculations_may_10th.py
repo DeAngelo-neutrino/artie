@@ -432,9 +432,13 @@ A_err, B_err, C_err = perr
 print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
 
 
+sigma_A = A_err
+sigma_B = B_err
+sigma_C = C_err
+
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}\n   f"Parameter errors: ΔA = {A_err} \n  ΔB = {B_err} \n  ΔC = {C_err}"' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='rolling average Data')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -501,10 +505,13 @@ A_err, B_err, C_err = perr
 print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
 
 
+sigma_A = A_err
+sigma_B = B_err
+sigma_C = C_err
+
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}\n   f"Parameter errors: ΔA = {A_err} \n  ΔB = {B_err} \n  ΔC = {C_err}"' )
-
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Segmented data ')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
@@ -566,10 +573,13 @@ A_err, B_err, C_err = perr
 print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
 
 
+sigma_A = A_err
+sigma_B = B_err
+sigma_C = C_err
+
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f}\n' f'B = {B_opt:.2e}\n' f'C = {C_opt:.2f}\n   f"Parameter errors: ΔA = {A_err} \n  ΔB = {B_err} \n  ΔC = {C_err}"' )
-
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='orginal data no fit')
 plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
