@@ -419,7 +419,7 @@ sigma_C = C_err
 
 
 # Plot data and fit
-annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' )
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' f'y = -A*e^(-B*x)+C\n' )
 plt.figure(figsize=(10, 6))
 plt.plot(x_data, y_data, 'g-',label='Data')
 plt.plot(x_data, y_fit, label='Rolling average decay data fit', color='blue')
@@ -433,11 +433,6 @@ plt.show()
 
 # Print the optimal parameters
 print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
-
-
-
-
-
 
 
 
@@ -570,6 +565,74 @@ plt.show()
 
 # Print the optimal parameters
 print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
+
+
+
+
+
+print(df.head())
+#now we need to do the same thing but with the orginal data
+df['orginal'] = twice_length * all_togeterRs(df['N2 Level'])
+df['volume(Argon)_orginal'] =  v_h_0+(df['orginal']) + twice_length*full_integration #this is in cm^3
+volume_function_as_height_orginal = df['volume(Argon)_orginal']
+
+
+def exponential_decay(x, A, B, C):
+    return  -A* np.exp(-B * x) + C
+
+#this is for orginal data
+parse_orginal = volume_function_as_height_orginal.iloc[lower_parsed_data:upper_parsed_data] 
+
+
+x_data = parsed_time_average  
+y_data = parse_orginal 
+
+
+
+B = 1*10**-12
+initial_guess = [max(y_data),B, min(y_data)]
+
+# Perform the curve fitting
+popt, pcov  = curve_fit(exponential_decay, x_data, y_data, p0=initial_guess,maxfev=10000)
+
+# Extract the optimal parameters
+A_opt, B_opt, C_opt = popt
+
+# Generate y values using the fitted parameters
+y_fit = exponential_decay(x_data, *popt)
+
+#how to get errors https://stackoverflow.com/questions/43561036/how-do-i-use-pcov-in-python-to-get-errors-for-each-parameter
+perr = np.sqrt(np.diag(pcov))
+
+# Extract parameter errors
+A_err, B_err, C_err = perr
+print(f"Parameter errors: ΔA = {A_err}, ΔB = {B_err}, ΔC = {C_err}")
+
+
+sigma_A = A_err
+sigma_B = B_err
+sigma_C = C_err
+
+
+# Plot data and fit
+annotation_text = (f'A = {A_opt:.2f} ± {sigma_A:.2f}\n' f'B = {B_opt:.2e} ± {sigma_B:.2e}\n' f'C = {C_opt:.2f} ± {sigma_C:.2f}\n' f'y = A*e^(-B*x)+C\n')
+plt.figure(figsize=(10, 6))
+plt.plot(x_data, y_data, 'g-',label='orginal data no fit')
+plt.plot(x_data, y_fit, label='Exponential Decay Fit data', color='blue')
+plt.xlabel('Time [Seconds]')
+plt.ylabel('Volume as a function of height [cm^3]')
+#plt.plot(parsed_time_average,data_we_use, 'r-', label='Original')
+plt.title('Exponential Decay Fit August 22nd data')
+plt.legend()
+plt.text(.25, 0.95, annotation_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', color='black')
+plt
+plt.show()
+
+# Print the optimal parameters
+print(f"Optimal parameters:\nA = {A_opt}\nB = {B_opt}\nC = {C_opt}",'\n')
+
+
+
 
 
 
