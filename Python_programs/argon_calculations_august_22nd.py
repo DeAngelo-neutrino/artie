@@ -80,6 +80,7 @@ window_size = 900 #900 was intial value
 time_column = df['Time (s)']
 N2_level_dataseries = df['N2 Level'] # we can add +2 to account for baseline shift if we want to 
 N2_average = N2_level_dataseries.rolling(window = window_size).mean() #creates an average of 900
+time_average = time_column.rolling(window = window_size).mean() 
 #print(time_column)
 #print("This is the average with a window of 30" , N2_average)
 
@@ -127,9 +128,9 @@ for i in range(0, time_size-segmentsize+1,step_size ):
 
 
 plt.figure(3)
-plt.plot(N2_level_dataseries, 'k-', label='Original')
-plt.plot(N2_average, 'g.', label='Original') 
-#plt.plot(time_array,n_2_array,'b.',label="with a step of 30")
+plt.plot(N2_level_dataseries, 'r.', label='Original')
+plt.plot(time_average,N2_average, 'g.', label='window size 400') 
+plt.plot(time_array,n_2_array,'b.',label="with a step of 400")
 plt.ylabel("Argon Level [cm]")
 plt.xlabel("Time[s]")
 plt.title("time vs argon level")
@@ -139,8 +140,6 @@ plt.show()
 
 
 
-    
-    
 
 
 

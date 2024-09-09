@@ -124,8 +124,9 @@ for i in range(0, time_size-segmentsize+1,step_size ):
 
 
 plt.figure(3)
-plt.plot(N2_level_dataseries, 'k-', label='Original')
-plt.plot(N2_average, 'g-', label='Original') 
+plt.plot(N2_level_dataseries, 'r.', label='Original')
+plt.plot(N2_average, 'g.', label='window size 400') 
+plt.plot(time_array,n_2_array,'b.',label="with a step of 400")
 plt.ylabel("Argon Level [cm]")
 plt.xlabel("Time[s]")
 plt.show()
